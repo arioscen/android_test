@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.JsResult
@@ -7,6 +8,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.webkit.WebChromeClient
 import androidx.appcompat.app.AlertDialog
+import android.widget.Toast
+import android.util.Log
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,9 +51,20 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-
 //        webView.loadUrl("https://appadmin.starone.com.tw/Default")
         webView.loadUrl("http://10.1.2.250:8099/")
 //        webView.loadUrl("http://10.1.1.123/")
+    }
+
+    // 聆聽設備旋轉事件
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show()
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show()
+        }
     }
 }
