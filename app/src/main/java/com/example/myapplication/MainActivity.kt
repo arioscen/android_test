@@ -2,8 +2,11 @@ package com.example.myapplication
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.webkit.JsResult
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.webkit.WebChromeClient
+import androidx.appcompat.app.AlertDialog
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,10 +29,28 @@ class MainActivity : AppCompatActivity() {
         webView.setWebViewClient(object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 view.loadUrl(url)
-                return false
+                return true
             }
         })
 
-        webView.loadUrl("https://appadmin.starone.com.tw/Default")
+        // 顯示警告訊息
+        webView.setWebChromeClient(object : WebChromeClient() {
+            override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
+                val builder =  AlertDialog.Builder(this@MainActivity)
+                builder.setTitle("JsAlert")
+                builder.setMessage(message)
+                builder.setPositiveButton("Confirm") {dialog, which ->
+                    result.confirm()
+                }
+                builder.setCancelable(false)
+                builder.show()
+                return true
+            }
+        })
+
+
+//        webView.loadUrl("https://appadmin.starone.com.tw/Default")
+        webView.loadUrl("http://10.1.2.250:8099/")
+//        webView.loadUrl("http://10.1.1.123/")
     }
 }
