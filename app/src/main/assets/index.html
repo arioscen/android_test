@@ -14,10 +14,10 @@
             function clickJSTwo(x){
                 document.getElementById("zi").innerHTML = x
             }
-        //与Android交互的方法
+            //与Android交互的方法
             function clickAndroid(){
-                var result = prompt("js://webview?arg1=111&arg2=222")
-                alert("demo" + result)
+                //用androids.调用映射的对象    这里的androids是addJavascriptInterface()的第二个参数
+                android.jsAndroid("我是JS,我调用了Android的方法")
             }
         </script>
 

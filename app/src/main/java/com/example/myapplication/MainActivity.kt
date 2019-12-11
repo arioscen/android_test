@@ -6,11 +6,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import android.widget.Toast
 import android.util.Log
+import android.view.Gravity
 import android.webkit.*
 import android.widget.Button
 
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -49,6 +49,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        webView.addJavascriptInterface(JsObject(),"android")
+
 //        然后加载JS代码
         webView.loadUrl("file:///android_asset/index.html")
         // 调用JS无参方法
@@ -58,6 +60,17 @@ class MainActivity : AppCompatActivity() {
         btn_click_me.setOnClickListener {
             webView.evaluateJavascript("javascript:clickJS()"
             ) { value -> Toast.makeText(this@MainActivity, value, Toast.LENGTH_LONG).show() }
+        }
+    }
+
+    inner class JsObject {
+        @JavascriptInterface
+        fun jsAndroid(msg : String){
+            //点击html的Button调用Android的Toast代码
+            //我这里让Toast居中显示了
+            val makeText = Toast.makeText(this@MainActivity, msg, Toast.LENGTH_LONG)
+            makeText.setGravity(Gravity.CENTER,0,0)
+            makeText.show()
         }
     }
 
