@@ -10,6 +10,7 @@ import android.webkit.WebChromeClient
 import androidx.appcompat.app.AlertDialog
 import android.widget.Toast
 import android.util.Log
+import android.widget.Button
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val webView: WebView = findViewById(R.id.webView)
+        val webView: WebView = findViewById(R.id.android_web)
         val webSettings = webView.getSettings()
         webSettings.setJavaScriptEnabled(true)
         webSettings.setDomStorageEnabled(true)
@@ -51,9 +52,25 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-//        webView.loadUrl("https://appadmin.starone.com.tw/Default")
-        webView.loadUrl("http://10.1.2.250:8099/")
-//        webView.loadUrl("http://10.1.1.123/")
+//        然后加载JS代码
+        webView.loadUrl("file:///android_asset/index.html")
+//        webView.loadUrl("javascript:alert('test !!!')")
+//        调用JS无参方法
+// get reference to button
+        val btn_click_me = findViewById(R.id.android_btn) as Button
+// set on-click listener
+        btn_click_me.setOnClickListener {
+            Toast.makeText(this@MainActivity, "You clicked me.", Toast.LENGTH_SHORT).show()
+            webView.post {
+                run {
+                    //第一种方法 通过loadUrl调用JS代码
+                    //调用无参JS方法
+                    webView.loadUrl("javascript:clickJS()")
+                    //调用有参JS方法
+                    // androidWeb.loadUrl("javascript:clickJS('我调用了JS的方法')")
+                }
+            }
+        }
     }
 
     // 聆聽設備旋轉事件
