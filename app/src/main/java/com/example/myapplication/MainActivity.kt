@@ -51,15 +51,13 @@ class MainActivity : AppCompatActivity() {
 
 //        然后加载JS代码
         webView.loadUrl("file:///android_asset/index.html")
-//        webView.loadUrl("javascript:alert('test !!!')")
-//        调用JS无参方法
-// get reference to button
+        // 调用JS无参方法
+        // get reference to button
         val btn_click_me = findViewById(R.id.android_btn) as Button
-// set on-click listener
+        // set on-click listener
         btn_click_me.setOnClickListener {
-            webView.evaluateJavascript("javascript:clickJS()") {
-                // 这里返回JS的结果
-            }
+            webView.evaluateJavascript("javascript:clickJS()"
+            ) { value -> Toast.makeText(this@MainActivity, value, Toast.LENGTH_LONG).show() }
         }
     }
 
