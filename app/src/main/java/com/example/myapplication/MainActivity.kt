@@ -52,8 +52,9 @@ class MainActivity : AppCompatActivity() {
         })
 
 //        webView.loadUrl("https://appadmin.starone.com.tw/Default")
-        webView.loadUrl("http://10.1.2.250:8099/")
+//        webView.loadUrl("http://10.1.2.250:8099/")
 //        webView.loadUrl("http://10.1.1.123/")
+                webView.loadUrl("http://10.1.1.102/")
     }
 
     // 聆聽設備旋轉事件
