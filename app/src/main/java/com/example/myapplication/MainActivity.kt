@@ -20,8 +20,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val webView: WebView = findViewById(R.id.webView)
-        val webSettings = webView.getSettings()
+        val mWebView: WebView = findViewById(R.id.webView)
+        val webSettings = mWebView.getSettings()
         webSettings.setJavaScriptEnabled(true)
         webSettings.setDomStorageEnabled(true)
         webSettings.setLoadWithOverviewMode(true)
@@ -30,18 +30,17 @@ class MainActivity : AppCompatActivity() {
         webSettings.setDisplayZoomControls(false)
         webSettings.setSupportZoom(true)
         webSettings.setDefaultTextEncodingName("utf-8")
-        webView.setOnKeyListener(onKeyEvent)
 
         // 避免打開系統瀏覽器
-        webView.setWebViewClient(object : WebViewClient() {
+        mWebView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 view.loadUrl(url)
                 return true
             }
-        })
+        }
 
         // 顯示警告訊息
-        webView.setWebChromeClient(object : WebChromeClient() {
+        mWebView.webChromeClient = object : WebChromeClient() {
             override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
                 val builder =  AlertDialog.Builder(this@MainActivity)
                 builder.setTitle("JsAlert")
@@ -53,12 +52,26 @@ class MainActivity : AppCompatActivity() {
                 builder.show()
                 return true
             }
-        })
+        }
 
 //        webView.loadUrl("https://appadmin.starone.com.tw/Default")
 //        webView.loadUrl("http://10.1.2.250:8099/")
 //        webView.loadUrl("http://10.1.1.123/")
-                webView.loadUrl("http://10.1.1.102/")
+        mWebView.loadUrl("http://10.1.1.102/")
+
+        // 返回上一頁
+        mWebView.setOnKeyListener(
+            View.OnKeyListener {v, keyCode, event ->
+                val action = event.action
+                val webView = v as WebView
+                if (KeyEvent.ACTION_DOWN == action && KeyEvent.KEYCODE_BACK == keyCode) {
+                    if (webView.canGoBack()) {
+                        webView.goBack()
+                        return@OnKeyListener true
+                    }
+                }
+                false
+        })
     }
 
     // 聆聽設備旋轉事件
@@ -81,18 +94,5 @@ class MainActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
-    }
-
-    // 設定返回上一頁
-    private val onKeyEvent = View.OnKeyListener { v, keyCode, event ->
-        val action = event.action
-        val webView = v as WebView
-        if (KeyEvent.ACTION_DOWN == action && KeyEvent.KEYCODE_BACK == keyCode) {
-            if (webView.canGoBack()) {
-                webView.goBack()
-                return@OnKeyListener true
-            }
-        }
-        false
     }
 }
