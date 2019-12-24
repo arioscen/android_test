@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "87459318511",
+    "firebase_url": "https://arioscen-test.firebaseio.com",
+    "project_id": "arioscen-test",
+    "storage_bucket": "arioscen-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87459318511:android:023a48e3bcb8a4a06a291a",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "87459318511-to43j1lne98sl7eohgldbaot8lv38ivm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.myapplication",
+            "certificate_hash": "f9ab6d6f920db674ef81eb0d5f1a6d9aa144b4bd"
+          }
+        },
+        {
+          "client_id": "87459318511-sckeaftl4uer056gtv91i0nvmlr1tk8t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfZ-tVlCLrkurL0HzR9zolW_-3LQGIGJE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "87459318511-sckeaftl4uer056gtv91i0nvmlr1tk8t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

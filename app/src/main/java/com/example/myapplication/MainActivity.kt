@@ -12,8 +12,11 @@ import android.widget.Toast
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 
 class MainActivity : AppCompatActivity() {
+    private val TAG = "MainActivity"
     private var mExitTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +75,21 @@ class MainActivity : AppCompatActivity() {
                 }
                 false
         })
+
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w(TAG, "getInstanceId failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+                // Get new Instance ID token
+                val token = task.result?.token
+
+                // Log and toast
+                Log.d(TAG, token)
+                Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
+            })
     }
 
     // 聆聽設備旋轉事件
