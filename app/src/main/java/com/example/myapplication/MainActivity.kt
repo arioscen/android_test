@@ -12,6 +12,9 @@ import android.widget.Toast
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import androidx.appcompat.widget.Toolbar
+import android.view.Menu
+
 
 class MainActivity : AppCompatActivity() {
     private var mExitTime = 0L
@@ -72,6 +75,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 false
         })
+
+        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        setSupportActionBar(toolbar)
+        getSupportActionBar()?.setDisplayShowTitleEnabled(false)
     }
 
     // 聆聽設備旋轉事件
@@ -94,5 +101,11 @@ class MainActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
     }
 }
