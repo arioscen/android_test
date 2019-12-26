@@ -12,17 +12,22 @@ import android.widget.Toast
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import androidx.appcompat.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
+
 
 class MainActivity : AppCompatActivity() {
     private var mExitTime = 0L
+    private var mWebView: WebView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val mWebView: WebView = findViewById(R.id.webView)
-        val webSettings = mWebView.getSettings()
-        webSettings.setJavaScriptEnabled(true)
+        mWebView = findViewById(R.id.webView)
+        val webSettings = mWebView?.getSettings()
+        webSettings!!.setJavaScriptEnabled(true)
         webSettings.setDomStorageEnabled(true)
         webSettings.setLoadWithOverviewMode(true)
         webSettings.setUseWideViewPort(true)
@@ -32,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         webSettings.setDefaultTextEncodingName("utf-8")
 
         // 避免打開系統瀏覽器
-        mWebView.webViewClient = object : WebViewClient() {
+        mWebView?.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 view.loadUrl(url)
                 return true
@@ -40,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 顯示警告訊息
-        mWebView.webChromeClient = object : WebChromeClient() {
+        mWebView?.webChromeClient = object : WebChromeClient() {
             override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
                 val builder =  AlertDialog.Builder(this@MainActivity)
                 builder.setTitle("JsAlert")
@@ -57,10 +62,10 @@ class MainActivity : AppCompatActivity() {
 //        webView.loadUrl("https://appadmin.starone.com.tw/Default")
 //        webView.loadUrl("http://10.1.2.250:8099/")
 //        webView.loadUrl("http://10.1.1.123/")
-        mWebView.loadUrl("http://10.1.1.102/")
+        mWebView?.loadUrl("http://10.1.1.102/")
 
         // 返回上一頁
-        mWebView.setOnKeyListener(
+        mWebView?.setOnKeyListener(
             View.OnKeyListener {v, keyCode, event ->
                 val action = event.action
                 val webView = v as WebView
@@ -72,6 +77,15 @@ class MainActivity : AppCompatActivity() {
                 }
                 false
         })
+
+        // Toolsbar
+        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        setSupportActionBar(toolbar)
+        getSupportActionBar()?.setDisplayShowTitleEnabled(false)
+        toolbar.setNavigationOnClickListener {
+            mWebView?.goBack()
+        }
+
     }
 
     // 聆聽設備旋轉事件
@@ -94,5 +108,23 @@ class MainActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.myHome -> {
+            mWebView?.loadUrl("http://10.1.1.102/")
+            true
+        }
+        R.id.myList -> {
+            Toast.makeText(this, "List button click", Toast.LENGTH_SHORT).show()
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 }

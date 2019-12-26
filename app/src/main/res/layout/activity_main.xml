@@ -7,6 +7,13 @@
     android:background="#EEE"
     tools:context=".MainActivity">
 
+    <!-- Load the toolbar here -->
+    <include
+        layout="@layout/toolbar_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <!-- Rest of content for the activity -->
+
     <WebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
