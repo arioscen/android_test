@@ -9,6 +9,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -55,6 +56,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         remoteMessage.notification?.let {
             Log.d(TAG, "Message Notification Body: ${it.body}")
             sendNotification(it.body.toString())
+
+            broadcast = LocalBroadcastManager.getInstance(this)
+            showAlert(it.title.toString(), it.body.toString())
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
@@ -145,5 +149,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     companion object {
 
         private const val TAG = "MyFirebaseMsgService"
+    }
+
+    lateinit var broadcast: LocalBroadcastManager
+
+    private fun showAlert(title:String, message:String) {
+        val intent = Intent("MyMessage")
+        intent.putExtra("title", title)
+        intent.putExtra("message", message)
+        broadcast.sendBroadcast(intent)
     }
 }
