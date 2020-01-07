@@ -15,6 +15,9 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
+import okhttp3.*
+import java.io.IOException
 
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -108,9 +111,32 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      *
      * @param token The new token.
      */
-    private fun sendRegistrationToServer(token: String?) {
+    private fun sendRegistrationToServer(deviceToken: String?) {
         // TODO: Implement this method to send token to your app server.
-        Log.d(TAG, "sendRegistrationTokenToServer($token)")
+        Log.d(TAG, "sendRegistrationTokenToServer($deviceToken)")
+
+        val device = Device()
+        device.token = deviceToken!!
+        val dataToJson = Gson().toJson(device)
+
+        val body = RequestBody.create(
+            MediaType.parse("application/json; charset=utf-8"),
+            dataToJson
+        )
+        val req = Request.Builder()
+            .url("http://floating-wildwood-89430.herokuapp.com/api/group/default/add")
+            .post(body).build()
+        OkHttpClient().newCall(req).enqueue(object: Callback {
+            override fun onResponse(call: Call, response: Response) {
+                val json = response.body()?.string()
+                val serverResponse = Gson().fromJson(json, ServcerResponse::class.java)
+                Log.d(TAG, serverResponse.result.toString())
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+
+            }
+        })
     }
 
     /**
@@ -160,5 +186,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         intent.putExtra("title", title)
         intent.putExtra("message", message)
         broadcast.sendBroadcast(intent)
+    }
+
+    class Device {
+        var token = ""
+    }
+
+    class ServcerResponse {
+        var result = false
     }
 }
