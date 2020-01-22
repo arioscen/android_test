@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">直營合夥管理系統</string>
+    <string name="app_name">StarClinic</string>
+    <string name="msg_token_fmt">msg_token_fmt</string>
+    <string name="default_notification_channel_id">TEST_CHANNEL_ID</string>
 </resources>

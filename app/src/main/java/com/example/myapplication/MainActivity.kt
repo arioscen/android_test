@@ -1,23 +1,29 @@
 package com.example.myapplication
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.webkit.JsResult
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.webkit.WebChromeClient
-import androidx.appcompat.app.AlertDialog
-import android.widget.Toast
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import android.webkit.JsResult
+import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+
 
 
 class MainActivity : AppCompatActivity() {
+    private val TAG = "MainActivity"
     private var mExitTime = 0L
     private var mWebView: WebView? = null
 
@@ -126,5 +132,28 @@ class MainActivity : AppCompatActivity() {
             true
         }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    private var messageReceiver = object: BroadcastReceiver(){
+
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            val simpleAlert = AlertDialog.Builder(this@MainActivity).create()
+            simpleAlert.setTitle(p1?.getStringExtra("title"))
+            simpleAlert.setMessage(p1?.getStringExtra("message"))
+            simpleAlert.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { dialogInterface, i ->
+                Toast.makeText(applicationContext, "You clicked on OK", Toast.LENGTH_SHORT).show()
+            }
+            simpleAlert.show()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, IntentFilter("MyMessage"))
+    }
+
+    override fun onStop() {
+        super.onStop()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver)
     }
 }
