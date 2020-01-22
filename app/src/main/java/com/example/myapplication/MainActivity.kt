@@ -16,6 +16,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.gson.Gson
+import java.io.InputStream
 
 
 class MainActivity : AppCompatActivity() {
@@ -63,7 +65,8 @@ class MainActivity : AppCompatActivity() {
 //        webView.loadUrl("https://appadmin.starone.com.tw/Default")
 //        webView.loadUrl("http://10.1.2.250:8099/")
 //        webView.loadUrl("http://10.1.1.123/")
-        mWebView.loadUrl("http://10.1.1.102/")
+        val config = readConfigFile()
+        mWebView.loadUrl(config?.default_url)
 
         // 返回上一頁
         mWebView.setOnKeyListener(
@@ -123,5 +126,22 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver)
+    }
+
+    fun readConfigFile(): Config? {
+        var config: Config? = null
+        try {
+            val inputStream: InputStream = assets.open("config.json")
+            val json = inputStream.bufferedReader().use{it.readText()}
+            config = Gson().fromJson(json, Config::class.java)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            return null
+        }
+        return config
+    }
+
+    class Config {
+        var default_url = ""
     }
 }
