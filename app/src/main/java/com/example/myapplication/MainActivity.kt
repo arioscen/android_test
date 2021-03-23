@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
 //        webView.loadUrl("https://appadmin.starone.com.tw/Default")
 //        webView.loadUrl("http://10.1.2.250:8099/")
 //        webView.loadUrl("http://10.1.1.123/")
-        mWebView?.loadUrl("http://10.1.1.102/")
+        mWebView?.loadUrl("https://mobile.starone.com.tw/")
 
         // 返回上一頁
         mWebView?.setOnKeyListener(
@@ -85,12 +85,12 @@ class MainActivity : AppCompatActivity() {
         })
 
         // Toolsbar
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-        getSupportActionBar()?.setDisplayShowTitleEnabled(false)
-        toolbar.setNavigationOnClickListener {
-            mWebView?.goBack()
-        }
+//        val toolbar = findViewById(R.id.toolbar) as Toolbar
+//        setSupportActionBar(toolbar)
+//        getSupportActionBar()?.setDisplayShowTitleEnabled(false)
+//        toolbar.setNavigationOnClickListener {
+//            mWebView?.goBack()
+//        }
 
     }
 
@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.myHome -> {
-            mWebView?.loadUrl("http://10.1.1.102/")
+            mWebView?.loadUrl("https://mobile.starone.com.tw/")
             true
         }
         R.id.myList -> {

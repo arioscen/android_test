@@ -8,10 +8,10 @@
     tools:context=".MainActivity">
 
     <!-- Load the toolbar here -->
-    <include
-        layout="@layout/toolbar_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--    <include-->
+<!--        layout="@layout/toolbar_main"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
     <!-- Rest of content for the activity -->
 
     <WebView
