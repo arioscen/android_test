@@ -19,7 +19,10 @@ import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 
 
 class MainActivity : AppCompatActivity() {
@@ -41,6 +44,22 @@ class MainActivity : AppCompatActivity() {
         webSettings.setDisplayZoomControls(false)
         webSettings.setSupportZoom(true)
         webSettings.setDefaultTextEncodingName("utf-8")
+
+        // Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(this)
+        val url = "https://www.google.com"
+        // Request a string response from the provided URL.
+        val stringRequest = StringRequest(
+            Request.Method.GET, url,
+            Response.Listener<String> { response ->
+                // Display the first 500 characters of the response string.
+                Toast.makeText(this, "Response is: ${response.substring(0, 500)}", Toast.LENGTH_LONG).show()
+            },
+            Response.ErrorListener {
+                Toast.makeText(this, "That didn't work!", Toast.LENGTH_LONG).show()
+            })
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest)
 
         // 避免打開系統瀏覽器
         mWebView?.webViewClient = object : WebViewClient() {
