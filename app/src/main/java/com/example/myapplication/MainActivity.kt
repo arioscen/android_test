@@ -23,6 +23,7 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -47,17 +48,21 @@ class MainActivity : AppCompatActivity() {
 
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
-        val url = "https://www.google.com"
+        val url = "http://172.31.28.31/api/app/latest-version?system=android"
         // Request a string response from the provided URL.
-        val stringRequest = StringRequest(
+        val stringRequest = object : StringRequest(
             Request.Method.GET, url,
             Response.Listener<String> { response ->
                 // Display the first 500 characters of the response string.
-                Toast.makeText(this, "Response is: ${response.substring(0, 500)}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, response, Toast.LENGTH_LONG).show()
             },
             Response.ErrorListener {
                 Toast.makeText(this, "That didn't work!", Toast.LENGTH_LONG).show()
-            })
+            }) {
+            override fun getHeaders(): Map<String, String>? {
+                return mapOf("api-app-id" to "crm_api", "api-app-secure" to "3ca107511912f3f7eb5bed764d00389d")
+            }
+        }
         // Add the request to the RequestQueue.
         queue.add(stringRequest)
 
