@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.webkit.JsResult
@@ -23,6 +24,7 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.google.gson.Gson
 import java.util.*
 
 
@@ -54,7 +56,11 @@ class MainActivity : AppCompatActivity() {
             Request.Method.GET, url,
             Response.Listener<String> { response ->
                 // Display the first 500 characters of the response string.
-                Toast.makeText(this, response, Toast.LENGTH_LONG).show()
+//                Log.d("MainActivity", response)
+                val appVersion = Gson().fromJson(response, AppVersion::class.java)
+                Log.d("MainActivity", appVersion.msg)
+                Toast.makeText(this, appVersion.msg, Toast.LENGTH_LONG).show()
+//                Toast.makeText(this, response.toString(), Toast.LENGTH_LONG).show()
             },
             Response.ErrorListener {
                 Toast.makeText(this, "That didn't work!", Toast.LENGTH_LONG).show()
@@ -179,5 +185,9 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver)
+    }
+
+    class AppVersion {
+        var msg = ""
     }
 }
