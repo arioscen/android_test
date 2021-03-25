@@ -5,18 +5,19 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
+import android.util.ArrayMap
 import android.util.Log
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.webkit.JsResult
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
-import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -25,7 +26,6 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,6 +37,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // 啟動時檢查版本
+        checkVersion()
+
         mWebView = findViewById(R.id.webView)
         val webSettings = mWebView?.getSettings()
         webSettings!!.setJavaScriptEnabled(true)
@@ -47,30 +50,6 @@ class MainActivity : AppCompatActivity() {
         webSettings.setDisplayZoomControls(false)
         webSettings.setSupportZoom(true)
         webSettings.setDefaultTextEncodingName("utf-8")
-
-        // Instantiate the RequestQueue.
-        val queue = Volley.newRequestQueue(this)
-        val url = "http://172.31.28.31/api/app/latest-version?system=android"
-        // Request a string response from the provided URL.
-        val stringRequest = object : StringRequest(
-            Request.Method.GET, url,
-            Response.Listener<String> { response ->
-                // Display the first 500 characters of the response string.
-//                Log.d("MainActivity", response)
-                val appVersion = Gson().fromJson(response, AppVersion::class.java)
-                Log.d("MainActivity", appVersion.msg)
-                Toast.makeText(this, appVersion.msg, Toast.LENGTH_LONG).show()
-//                Toast.makeText(this, response.toString(), Toast.LENGTH_LONG).show()
-            },
-            Response.ErrorListener {
-                Toast.makeText(this, "That didn't work!", Toast.LENGTH_LONG).show()
-            }) {
-            override fun getHeaders(): Map<String, String>? {
-                return mapOf("api-app-id" to "crm_api", "api-app-secure" to "3ca107511912f3f7eb5bed764d00389d")
-            }
-        }
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest)
 
         // 避免打開系統瀏覽器
         mWebView?.webViewClient = object : WebViewClient() {
@@ -95,9 +74,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-//        webView.loadUrl("https://appadmin.starone.com.tw/Default")
-//        webView.loadUrl("http://10.1.2.250:8099/")
-//        webView.loadUrl("http://10.1.1.123/")
         mWebView?.loadUrl("https://mobile.starone.com.tw/")
 
         // 返回上一頁
@@ -187,7 +163,66 @@ class MainActivity : AppCompatActivity() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver)
     }
 
-    class AppVersion {
+    class NewVersion {
         var msg = ""
+        var data = emptyArray<VersionData>()
+    }
+
+    class VersionData {
+        var version = ""
+    }
+
+    fun forceUpdate() {
+        val intentUrl = "https://play.google.com/store/apps/details?id=com.spotify.music"
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setData(Uri.parse(intentUrl))
+        startActivity(intent)
+    }
+
+    fun checkVersion() {
+        // 讀取目前的版本號
+        val configFileStream = getAssets().open("config.json")
+        val size = configFileStream.available()
+        val buffer = ByteArray(size)
+        configFileStream.read(buffer)
+        val charset = Charsets.UTF_8
+        val configJson = String(buffer, charset)
+        val appVersion = Gson().fromJson(configJson, VersionData::class.java)
+        val appVersionNumbers = appVersion.version.split(".").toTypedArray()
+
+        // 取得最新的版本號
+        val queue = Volley.newRequestQueue(this)
+        val url = "http://172.31.28.31/api/app/latest-version?system=android"
+        val stringRequest = object : StringRequest(
+            Request.Method.GET, url,
+            Response.Listener<String> { response ->
+                val newVersion = Gson().fromJson(response, NewVersion::class.java)
+                val newVersionNumbers = newVersion.data[0].version.split(".").toTypedArray()
+
+                // 檢查目前版本跟最新版本是否有差異
+                for (i in appVersionNumbers.indices) {
+                    if (appVersionNumbers[i] < newVersionNumbers[i]) {
+                        val builder = AlertDialog.Builder(this)
+                        builder.setMessage("請更新至最新版 " + newVersion.data[0].version)
+                        builder.setPositiveButton("確認") {dialog, which ->}
+                        builder.setOnDismissListener {
+                            // 提示更新後，強制更新
+                            forceUpdate()
+                        }
+                        builder.show()
+                        break
+                    }
+                }
+            },
+            Response.ErrorListener {
+                // 檢查版本連結失敗，強制更新
+                forceUpdate()
+            }) {
+            override fun getHeaders(): Map<String, String>? {
+//                return emptyMap()
+                return mapOf("api-app-id" to "crm_api", "api-app-secure" to "3ca107511912f3f7eb5bed764d00389d")
+            }
+        }
+        queue.add(stringRequest)
     }
 }
