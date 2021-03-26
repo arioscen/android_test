@@ -37,9 +37,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // 啟動時檢查版本
-        checkVersion()
-
         mWebView = findViewById(R.id.webView)
         val webSettings = mWebView?.getSettings()
         webSettings!!.setJavaScriptEnabled(true)
@@ -156,6 +153,12 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, IntentFilter("MyMessage"))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 啟動或喚醒時檢查版本
+        checkVersion()
     }
 
     override fun onStop() {
